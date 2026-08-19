@@ -94,7 +94,7 @@ guidance, and applicable ISO/IEC standards).
 Part of the same family — same guardrails, same offline-first, no-black-box-AI philosophy:
 [RegCompass](https://rajeevyadav.github.io/regcompass/) ·
 [CyberCompass](https://rajeevyadav.github.io/cybercompass/) ·
-[eIFUCompass](https://rajeevyadav.github.io/eIFUCompass/).
+[eIFUCompass](https://rajeevyadav.github.io/eifucompass/).
 
 ## License
 
