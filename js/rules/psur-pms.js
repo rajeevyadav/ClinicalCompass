@@ -5,7 +5,7 @@
    Pure function. */
 (function (root) {
   'use strict';
-  const CC = root.CC; const S = CC.STATUS; const V = '2026-08-18';
+  const CC = root.CC; const S = CC.STATUS; const V = '2026-08-19';
 
   function evaluate(p) {
     let tier, freq, route;

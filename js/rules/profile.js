@@ -4,7 +4,7 @@
    Annex VIII Rule 11 auto-flag (SaMD + Class I → warn). Pure function. */
 (function (root) {
   'use strict';
-  const CC = root.CC; const S = CC.STATUS; const V = '2026-08-18';
+  const CC = root.CC; const S = CC.STATUS; const V = '2026-08-19';
 
   function evaluate(p) {
     const fields = [p.deviceName, p.intendedPurpose, p.population, p.userEnv];
