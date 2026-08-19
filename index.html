@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<!-- ClinicalCompass — Clinical Evaluation (EU MDR) / Clinical Evidence (FDA)
+     Navigator. Version 1.0.0. Deterministic, offline-first, no AI in the
+     compliance logic. Verify every citation against the current source text. -->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="ClinicalCompass — dual-market (FDA + EU MDR) decision-support for clinical evaluation and clinical evidence across 14 modules. Deterministic, offline, no AI in the compliance logic.">
+<title>ClinicalCompass — Clinical Evaluation Navigator</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0d7377">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="pwa-icon-192.png">
+<link rel="stylesheet" href="css/theme.css">
+<link rel="stylesheet" href="css/layout.css">
+<link rel="stylesheet" href="css/components.css">
+</head>
+<body data-theme="light" data-market="both">
+
+<header>
+  <div class="brand">
+    <div class="brand-mark">
+      <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <circle cx="24" cy="24" r="21" stroke="#ffffff" stroke-width="2.4" fill="none" opacity="0.95"/>
+        <line x1="24" y1="4.5" x2="24" y2="9" stroke="#ffffff" stroke-width="2" stroke-linecap="round"/>
+        <line x1="24" y1="39" x2="24" y2="43.5" stroke="#ffffff" stroke-width="2" stroke-linecap="round"/>
+        <line x1="4.5" y1="24" x2="9" y2="24" stroke="#ffffff" stroke-width="2" stroke-linecap="round"/>
+        <line x1="39" y1="24" x2="43.5" y2="24" stroke="#ffffff" stroke-width="2" stroke-linecap="round"/>
+        <path d="M24 11L28 24L24 37L20 24Z" fill="#ffffff"/>
+        <path d="M24 11L28 24L24 24Z" fill="#ffffff" opacity="0.55"/>
+        <path d="M24 37L20 24L24 24Z" fill="#ffffff" opacity="0.55"/>
+        <circle cx="24" cy="24" r="7.5" fill="#ffffff"/>
+        <path d="M24 19.5V28.5M19.5 24H28.5" stroke="#0a5b5e" stroke-width="2.6" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <div>
+      <h1>ClinicalCompass</h1>
+      <span>Clinical Evaluation &amp; Clinical Evidence Navigator — FDA + EU MDR</span>
+    </div>
+  </div>
+  <div class="market-tabs" id="marketTabs">
+    <button data-market="fda">FDA</button>
+    <button data-market="eu">EU MDR</button>
+    <button data-market="both" class="active">Both / Compare</button>
+  </div>
+  <div class="header-actions">
+    <button class="icon-btn" id="themeToggle" title="Toggle dark/light mode" aria-label="Toggle dark/light mode">◑</button>
+    <button class="icon-btn" id="exportBtn" title="Export / Print master report" aria-label="Export / Print master report">⇩</button>
+  </div>
+</header>
+
+<div class="disclaimer-bar">
+  Decision-support only — not a substitute for qualified regulatory or clinical-evaluation expertise. Verify all citations against current source documents before use in a submission.
+</div>
+
+<nav class="module-nav" id="moduleNav">
+  <button data-target="mod-profile" class="active">1 · Profiler</button>
+  <button data-target="mod-strategy">2 · Strategy</button>
+  <button data-target="mod-equivalence">3 · Equivalence</button>
+  <button data-target="mod-gap">4 · Data Gap</button>
+  <button data-target="mod-cep">5 · CEP/CER</button>
+  <button data-target="mod-pmcf">6 · PMCF</button>
+  <button data-target="mod-sscp">7 · SSCP</button>
+  <button data-target="mod-psur">7b · PSUR/PMS</button>
+  <button data-target="mod-samd">8 · SaMD/AI</button>
+  <button data-target="mod-hf">9 · Human Factors</button>
+  <button data-target="mod-cyber">10 · Cybersecurity</button>
+  <button data-target="mod-soup">11 · SOUP/OTS</button>
+</nav>
+
+<main>
+  <div class="left-col">
+
+    <!-- 1 PROFILER -->
+    <section id="mod-profile" class="module-section">
+      <div class="card" data-collapsible>
+        <div class="card-header"><h2>1 · Device &amp; Intended Purpose Profiler <small>Foundation — all modules read from this profile</small></h2><span class="chevron">▾</span></div>
+        <div class="card-body">
+          <div class="field-row">
+            <div class="field"><label for="deviceName">Device name / model</label><input type="text" id="deviceName" placeholder="e.g. NeuroSense CT-100"></div>
+            <div class="field"><label for="prevHistory">Previous regulatory history</label>
+              <select id="prevHistory">
+                <option value="none">None — first submission</option>
+                <option value="legacy-mdd">Legacy device (MDD → MDR transition)</option>
+                <option value="510k">Prior 510(k) clearance (predicate available)</option>
+                <option value="pma">Prior PMA</option>
+                <option value="denovo">Prior De Novo</option>
+              </select>
+            </div>
+          </div>
+          <div class="field"><label for="euClass">EU MDR risk classification</label>
+            <select id="euClass">
+              <option value="I">Class I</option>
+              <option value="Im">Class I — measuring / sterile (Im/Is)</option>
+              <option value="IIa">Class IIa</option>
+              <option value="IIb">Class IIb</option>
+              <option value="III" selected>Class III</option>
+            </select>
+          </div>
+          <div class="field"><label for="fdaPath">FDA classification / pathway</label>
+            <select id="fdaPath">
+              <option value="I">Class I</option>
+              <option value="II-510k" selected>Class II — 510(k)</option>
+              <option value="II-denovo">Class II — De Novo</option>
+              <option value="III-pma">Class III — PMA</option>
+            </select>
+          </div>
+          <div class="field"><label for="intendedPurpose">Intended purpose / indications for use</label>
+            <textarea id="intendedPurpose" placeholder="Describe intended clinical use, target condition, and claims..."></textarea>
+            <div class="help">Free-text detail feeds the completeness check below. Completeness is measured here as "field length &gt; 3 characters" — a navigator-level proxy, not a clinical-sufficiency judgment; a short but complete sentence can still pass this check while being clinically insufficient.</div>
+          </div>
+          <div class="field-row">
+            <div class="field"><label for="population">Target patient population / condition</label><input type="text" id="population" placeholder="e.g. adults with..."></div>
+            <div class="field"><label for="userEnv">Intended users / use environment</label><input type="text" id="userEnv" placeholder="e.g. HCPs, clinical setting"></div>
+          </div>
+          <div class="field"><label>Device / technology flags</label>
+            <div class="checkbox-grid">
+              <label class="checkbox-item"><input type="checkbox" id="flagNovel"> Novel (not well-established technology)</label>
+              <label class="checkbox-item"><input type="checkbox" id="flagSamd"> Software / SaMD / AI-enabled</label>
+              <label class="checkbox-item"><input type="checkbox" id="flagImplant"> Implantable / active implantable / invasive</label>
+              <label class="checkbox-item"><input type="checkbox" id="flagSoup"> Contains SOUP / OTS software</label>
+              <label class="checkbox-item"><input type="checkbox" id="flagNetworked"> Networked / connected / data-transmitting</label>
+              <label class="checkbox-item"><input type="checkbox" id="flagHighUseRisk"> High use-error risk scenarios present</label>
+            </div>
+          </div>
+          <div id="profileOutputs"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2 STRATEGY -->
+    <section id="mod-strategy" class="module-section" style="display:none;">
+      <div class="card" data-collapsible>
+        <div class="card-header"><h2>2 · Clinical Evaluation Strategy Engine <small>EU MDR Art. 61 + Annex XIV · FDA pathway logic</small></h2><span class="chevron">▾</span></div>
+        <div class="card-body">
+          <div class="market-only-eu">
+            <h4 style="margin:0 0 0.4rem; font-size:0.85rem;">EU MDR — Article 61(4–6) clinical investigation decision tree</h4>
+            <div class="field"><label>Is the device implantable or Class III?</label>
+              <div class="pill-select" data-pillgroup="art61-implant"><div class="pill" data-value="yes">Yes</div><div class="pill selected" data-value="no">No</div></div>
+            </div>
+            <div class="field"><label>Does an Art. 61(4) / 61(6) exception apply? (well-established technology, prior CE-marked equivalent by same manufacturer, sufficient literature per MDCG 2023-7)</label>
+              <div class="pill-select" data-pillgroup="art61-exception"><div class="pill" data-value="yes">Yes — exception applies</div><div class="pill selected" data-value="no">No / not established</div></div>
+            </div>
+            <div class="field" id="art61SubtypeField" style="display:none;"><label>Which specific exception route applies? (each has distinct documentation burden — MDCG 2023-7)</label>
+              <select id="art61Subtype">
+                <option value="61-5">Art. 61(5) — well-established technology, own device modification, no significant clinical performance/safety change</option>
+                <option value="61-6a">Art. 61(6)(a) — legacy MDD/AIMDD device with sufficient existing clinical data + applicable Common Specification</option>
+                <option value="61-6b">Art. 61(6)(b) — device on the Commission's list of well-established-technology exempted device types</option>
+                <option value="equiv-competitor">Equivalence to a competitor's (third-party) device — full contractual data-access route, MDCG 2020-5</option>
+              </select>
+              <div class="help">Notified Bodies scrutinize which exact legal route is being claimed — a generic "exception applies" answer without specifying the route is a common CER deficiency finding.</div>
+            </div>
+          </div>
+          <div class="market-only-fda">
+            <h4 style="margin:0.8rem 0 0.4rem; font-size:0.85rem;">FDA — pathway clinical data expectation</h4>
+            <div class="help">Driven by the FDA classification/pathway selected in Module 1.</div>
+          </div>
+          <div id="strategyOutput"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3 EQUIVALENCE -->
+    <section id="mod-equivalence" class="module-section" style="display:none;">
+      <div class="card" data-collapsible>
+        <div class="card-header"><h2>3 · Equivalence Assessment <small>MDCG 2020-5 — three-pillar comparison</small></h2><span class="chevron">▾</span></div>
+        <div class="card-body">
+          <div class="pillar-row">
+            <div class="pillar-box"><h5>Technical characteristics</h5>
+              <div class="pill-select" data-pillgroup="eq-tech"><div class="pill selected" data-value="equivalent">Equivalent</div><div class="pill" data-value="minor-diff">Minor differences</div><div class="pill" data-value="not-equivalent">Not equivalent</div></div>
+            </div>
+            <div class="pillar-box"><h5>Biological characteristics</h5>
+              <div class="pill-select" data-pillgroup="eq-bio"><div class="pill selected" data-value="equivalent">Equivalent</div><div class="pill" data-value="minor-diff">Minor differences</div><div class="pill" data-value="not-equivalent">Not equivalent</div></div>
+            </div>
+            <div class="pillar-box"><h5>Clinical characteristics</h5>
+              <div class="pill-select" data-pillgroup="eq-clin"><div class="pill selected" data-value="equivalent">Equivalent</div><div class="pill" data-value="minor-diff">Minor differences</div><div class="pill" data-value="not-equivalent">Not equivalent</div></div>
+            </div>
+          </div>
+          <div class="field"><label>Does the manufacturer have sufficient access to the equivalent device's technical documentation (MDCG 2020-5 access requirement)?</label>
+            <div class="pill-select" data-pillgroup="eq-access"><div class="pill" data-value="yes">Sufficient access</div><div class="pill selected" data-value="no">Not established</div></div>
+            <div class="help">Access is generally internal/straightforward when comparing to the <strong>manufacturer's own</strong> previously marketed device. The strict contractual/legal-access requirement (written agreement demonstrating the same level of access as if the data were their own — MDCG 2020-5 §D, MDCG 2023-7) applies specifically when claiming equivalence to a <strong>third-party competitor device</strong>. This field does not distinguish the two — treat "sufficient access" more conservatively for a competitor device.</div>
+          </div>
+          <div id="equivalenceOutput"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4 DATA GAP -->
+    <section id="mod-gap" class="module-section" style="display:none;">
+      <div class="card" data-collapsible>
+        <div class="card-header"><h2>4 · Clinical Data Sufficiency &amp; Gap Analyzer <small>Evidence hierarchy — inspired by MDCG 2020-6 Annex III</small></h2><span class="chevron">▾</span></div>
+        <div class="card-body">
+          <div class="field"><label>Data sources available (check all that apply)</label>
+            <div class="check-list">
+              <label><input type="checkbox" class="gap-src" value="own" checked> Manufacturer's own clinical data (investigations / PMCF)</label>
+              <label><input type="checkbox" class="gap-src" value="lit" checked> Literature / published clinical data</label>
+              <label><input type="checkbox" class="gap-src" value="equiv"> Equivalent / similar device data</label>
+              <label><input type="checkbox" class="gap-src" value="rwe"> Real-world evidence / registries</label>
+              <label><input type="checkbox" class="gap-src" value="nonclinical"> Non-clinical data supporting clinical claims</label>
+            </div>
+          </div>
+          <div class="field"><label for="gapClaims">Claimed clinical benefits / performance / safety endpoints to map data against</label>
+            <textarea id="gapClaims" placeholder="List the specific benefit, safety, and performance claims / GSPRs to be supported..."></textarea>
+          </div>
+          <div id="gapOutput"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5 CEP/CER -->
+    <section id="mod-cep" class="module-section" style="display:none;">
+      <div class="card" data-collapsible>
+        <div class="card-header"><h2>5 · CEP / CER Structure &amp; Completeness Checker <small>MDR Annex XIV Part A + MEDDEV 2.7/1 Rev.4 + MDCG</small></h2><span class="chevron">▾</span></div>
+        <div class="card-body">
+          <div class="field"><label>Clinical Evaluation Plan (CEP) sections present</label>
+            <div class="check-list">
+              <label><input type="checkbox" class="cep-item" checked> Scope, objectives, methodology</label>
+              <label><input type="checkbox" class="cep-item" checked> Identification of clinical data needs</label>
+              <label><input type="checkbox" class="cep-item"> Literature search protocol (databases, search strings, inclusion/exclusion criteria, date of search — systematic &amp; reproducible)</label>
+              <label><input type="checkbox" class="cep-item"> Equivalence analysis plan</label>
+              <label><input type="checkbox" class="cep-item"> Clinical development plan (if applicable)</label>
+              <label><input type="checkbox" class="cep-item"> PMCF integration</label>
+              <label><input type="checkbox" class="cep-item"> Benefit-risk determination criteria (acceptability thresholds defined up front)</label>
+              <label><input type="checkbox" class="cep-item"> Update frequency defined</label>
+            </div>
+          </div>
+          <div class="field"><label>Clinical Evaluation Report (CER) sections present</label>
+            <div class="check-list">
+              <label><input type="checkbox" class="cer-item" checked> Device description &amp; intended purpose</label>
+              <label><input type="checkbox" class="cer-item"> Clinical background / state of the art (SOTA analysis — alternative treatments/diagnostics, current clinical practice)</label>
+              <label><input type="checkbox" class="cer-item"> Clinical data appraisal (methodology, quality, relevance)</label>
+              <label><input type="checkbox" class="cer-item"> Analysis of clinical data</label>
+              <label><input type="checkbox" class="cer-item"> Conclusions on safety, performance, benefit-risk</label>
+              <label><input type="checkbox" class="cer-item"> Residual risks, information for safety &amp; residual-risk acceptance rationale</label>
+              <label><input type="checkbox" class="cer-item"> PMCF plan reference</label>
+              <label><input type="checkbox" class="cer-item"> SSCP consistency (Class III / implants)</label>
+              <label><input type="checkbox" class="cer-item"> Explicit GSPR (Annex I) conformity mapping table — every applicable GSPR mapped to supporting clinical evidence, not just referenced</label>
+            </div>
+          </div>
+          <div id="cepOutput"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6 PMCF -->
+    <section id="mod-pmcf" class="module-section" style="display:none;">
+      <div class="card" data-collapsible>
+        <div class="card-header"><h2>6 · PMCF Planning &amp; Report Module <small>MDCG 2020-7 / 2020-8 · Annex XIV Part B</small></h2><span class="chevron">▾</span></div>
+        <div class="card-body">
+          <div class="field"><label>PMCF methods planned</label>
+            <div class="check-list">
+              <label><input type="checkbox" class="pmcf-method"> Post-market surveys / questionnaires</label>
+              <label><input type="checkbox" class="pmcf-method"> Registries</label>
+              <label><input type="checkbox" class="pmcf-method"> Ongoing literature review</label>
+              <label><input type="checkbox" class="pmcf-method"> Specific PMCF study</label>
+              <label><input type="checkbox" class="pmcf-method"> Complaint / vigilance trend analysis</label>
+            </div>
+          </div>
+          <div class="field"><label for="pmcfJustify">Justification (required if no PMCF method is selected)</label>
+            <textarea id="pmcfJustify" placeholder="If claiming no PMCF is needed, justify against residual risk and data gaps..."></textarea>
+          </div>
+          <div id="pmcfOutput"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7 SSCP -->
+    <section id="mod-sscp" class="module-section" style="display:none;">
+      <div class="card" data-collapsible>
+        <div class="card-header"><h2>7 · SSCP Generator Support <small>MDR Art. 32 · MDCG 2019-9 Rev.1 — Class III / implantable devices</small></h2><span class="chevron">▾</span></div>
+        <div class="card-body">
+          <div class="field"><label>SSCP sections present</label>
+            <div class="check-list">
+              <label><input type="checkbox" class="sscp-item"> Device identification &amp; intended purpose</label>
+              <label><input type="checkbox" class="sscp-item"> Intended patient population / users</label>
+              <label><input type="checkbox" class="sscp-item"> Diagnostic/therapeutic alternatives</label>
+              <label><input type="checkbox" class="sscp-item"> Summary of clinical evaluation data</label>
+              <label><input type="checkbox" class="sscp-item"> Residual risks / warnings</label>
+              <label><input type="checkbox" class="sscp-item"> Patient-facing version considerations</label>
+            </div>
+          </div>
+          <div class="field"><label>Is the SSCP consistent with CER conclusions?</label>
+            <div class="pill-select" data-pillgroup="sscp-consistency"><div class="pill selected" data-value="yes">Consistent</div><div class="pill" data-value="no">Inconsistent / not yet checked</div></div>
+          </div>
+          <div id="sscpOutput"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7b PSUR/PMS -->
+    <section id="mod-psur" class="module-section" style="display:none;">
+      <div class="card" data-collapsible>
+        <div class="card-header"><h2>7b · PSUR &amp; Post-Market Surveillance <small>MDR Art. 83–86, Annex III · MDCG 2022-21</small></h2><span class="chevron">▾</span></div>
+        <div class="card-body">
+          <div class="help">Applicability and frequency are class-driven and computed automatically from the EU MDR class selected in Module 1: Class I → PMS Report only (no PSUR); Class IIa → PSUR at least every 2 years; Class IIb/III → PSUR at least annually, submitted to the Notified Body via EUDAMED for Class III/implantable (Art. 86(2)).</div>
+          <div class="field"><label>PMS/PSUR elements present</label>
+            <div class="check-list">
+              <label><input type="checkbox" class="psur-item" checked> PMS plan proportionate to risk class (Annex III §1.1)</label>
+              <label><input type="checkbox" class="psur-item"> Systematic data collection from multiple sources (complaints, vigilance, literature, registries)</label>
+              <label><input type="checkbox" class="psur-item"> Trend analysis / statistical methodology documented</label>
+              <label><input type="checkbox" class="psur-item"> Summary of main PMCF findings included (Art. 86(1))</label>
+              <label><input type="checkbox" class="psur-item"> Benefit-risk conclusion updated against PMS data</label>
+              <label><input type="checkbox" class="psur-item"> CAPA / preventive-corrective action rationale documented</label>
+            </div>
+          </div>
+          <div id="psurOutput"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 8 SAMD -->
+    <section id="mod-samd" class="module-section" style="display:none;">
+      <div class="card" data-collapsible>
+        <div class="card-header"><h2>8 · SaMD / AI Clinical Evaluation Module <small>IMDRF N41 + MDCG 2020-1 · FDA PCCP (§515C) · EU AI Act intersection</small></h2><span class="chevron">▾</span></div>
+        <div class="card-body">
+          <div class="pillar-row">
+            <div class="pillar-box"><h5>Valid clinical association</h5>
+              <div class="pill-select" data-pillgroup="samd-assoc"><div class="pill selected" data-value="established">Established</div><div class="pill" data-value="partial">Partial</div><div class="pill" data-value="not-established">Not established</div></div>
+            </div>
+            <div class="pillar-box"><h5>Analytical validation</h5>
+              <div class="pill-select" data-pillgroup="samd-analytical"><div class="pill selected" data-value="established">Established</div><div class="pill" data-value="partial">Partial</div><div class="pill" data-value="not-established">Not established</div></div>
+            </div>
+            <div class="pillar-box"><h5>Clinical validation</h5>
+              <div class="pill-select" data-pillgroup="samd-clinical"><div class="pill selected" data-value="established">Established</div><div class="pill" data-value="partial">Partial</div><div class="pill" data-value="not-established">Not established</div></div>
+            </div>
+          </div>
+          <div class="field"><label>Does the algorithm continuously learn / adapt post-deployment (locked vs. adaptive)?</label>
+            <div class="pill-select" data-pillgroup="samd-adaptive"><div class="pill selected" data-value="no">No — locked model</div><div class="pill" data-value="yes">Yes — continuous learning / adaptive</div></div>
+          </div>
+
+          <div class="market-only-fda">
+            <h4 style="margin:0.8rem 0 0.4rem; font-size:0.85rem;">FDA — Predetermined Change Control Plan (PCCP)</h4>
+            <div class="help">Required consideration for any AI/ML-enabled device (locked or adaptive) submitting under 510(k)/De Novo/PMA — FDA final guidance, Aug 2025, under FD&amp;C Act §515C.</div>
+            <div class="field"><label>PCCP elements present (only required if a PCCP will be submitted — locked models may skip)</label>
+              <div class="check-list">
+                <label><input type="checkbox" class="pccp-item"> Description of planned modifications (data, performance, retraining scope)</label>
+                <label><input type="checkbox" class="pccp-item"> Modification protocol (methodology to develop/validate/implement each change)</label>
+                <label><input type="checkbox" class="pccp-item"> Impact assessment (benefit-risk of the bounded changes)</label>
+                <label><input type="checkbox" class="pccp-item"> Aligned with GMLP (Good Machine Learning Practice) 10 guiding principles</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="market-only-eu">
+            <h4 style="margin:0.8rem 0 0.4rem; font-size:0.85rem;">EU — AI Act intersection (Reg. (EU) 2024/1689)</h4>
+            <div class="help">Auto-derived from EU MDR classification in Module 1: devices requiring Notified Body involvement (Class IIa and above) are high-risk AI systems under AI Act Art. 6(1)/Annex I when they qualify as AI systems. Compliance deadline (post Digital Omnibus, June 2026): 2 August 2028 for Annex I (regulated-product) AI systems.</div>
+            <div id="aiActOutput"></div>
+          </div>
+
+          <div id="samdOutput"></div>
+          <div id="pccpOutput"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 9 HUMAN FACTORS -->
+    <section id="mod-hf" class="module-section" style="display:none;">
+      <div class="card" data-collapsible>
+        <div class="card-header"><h2>9 · Human Factors / Usability Linkage <small>IEC 62366-1</small></h2><span class="chevron">▾</span></div>
+        <div class="card-body">
+          <div class="field"><label>Have critical tasks and use errors been mapped to residual risk?</label>
+            <div class="pill-select" data-pillgroup="hf-mapped"><div class="pill selected" data-value="yes">Yes</div><div class="pill" data-value="no">Not yet</div></div>
+          </div>
+          <div class="field"><label>Is summative usability validation evidence available (required where high-risk use scenarios exist)?</label>
+            <div class="pill-select" data-pillgroup="hf-summative"><div class="pill selected" data-value="yes">Yes / not applicable</div><div class="pill" data-value="no">No</div></div>
+          </div>
+          <div id="hfOutput"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 10 CYBER -->
+    <section id="mod-cyber" class="module-section" style="display:none;">
+      <div class="card" data-collapsible>
+        <div class="card-header"><h2>10 · Cybersecurity Considerations in Clinical Evaluation <small>MDCG 2019-16 + FDA cybersecurity guidance</small></h2><span class="chevron">▾</span></div>
+        <div class="card-body">
+          <div class="field"><label>Cybersecurity items addressed in the clinical evaluation</label>
+            <div class="check-list">
+              <label><input type="checkbox" class="cyber-item"> Cybersecurity-related residual risks identified and linked to clinical performance/safety claims</label>
+              <label><input type="checkbox" class="cyber-item"> Information for safety / labeling addresses cyber risk (IFU warnings, network requirements)</label>
+              <label><input type="checkbox" class="cyber-item"> Impact of planned security updates/patches on locked clinical performance claims assessed</label>
+              <label><input type="checkbox" class="cyber-item"> Cyber-related adverse scenarios considered in the benefit-risk conclusion (not risk-management file alone)</label>
+            </div>
+          </div>
+          <div class="help">For jurisdiction-by-jurisdiction cybersecurity requirement detail, see the companion <a href="https://rajeevyadav.github.io/cybercompass/" target="_blank" rel="noopener"><strong>CyberCompass</strong></a> tool.</div>
+          <div id="cyberOutput"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 11 SOUP -->
+    <section id="mod-soup" class="module-section" style="display:none;">
+      <div class="card" data-collapsible>
+        <div class="card-header"><h2>11 · SOUP / OTS Software Clinical Impact <small>IEC 62304</small></h2><span class="chevron">▾</span></div>
+        <div class="card-body">
+          <div class="field"><label for="soupRiskClass">SOUP risk classification (IEC 62304 §5.1, or 62304 amendment for legacy items)</label>
+            <select id="soupRiskClass">
+              <option value="A">Class A — no injury or damage to health possible</option>
+              <option value="B" selected>Class B — non-serious injury possible</option>
+              <option value="C">Class C — death or serious injury possible</option>
+            </select>
+          </div>
+          <div class="field"><label>SOUP/OTS documentation present</label>
+            <div class="check-list">
+              <label><input type="checkbox" class="soup-item"> SOUP components inventoried</label>
+              <label><input type="checkbox" class="soup-item"> Provenance documented</label>
+              <label><input type="checkbox" class="soup-item"> Known anomalies reviewed for clinical/safety impact (not just catalogued)</label>
+              <label><input type="checkbox" class="soup-item"> Clinical performance/safety impact assessed</label>
+              <label><input type="checkbox" class="soup-item"> Residual risk accepted or mitigated, with rationale documented</label>
+            </div>
+          </div>
+          <div id="soupOutput"></div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- RIGHT COLUMN -->
+  <div class="right-col sticky-panel">
+    <div class="card">
+      <div class="card-header"><h2>Live Gap &amp; Sufficiency Status</h2></div>
+      <div class="card-body">
+        <div class="gap-score-ring">
+          <svg width="110" height="110" viewBox="0 0 110 110">
+            <circle class="ring-bg" cx="55" cy="55" r="46"></circle>
+            <circle class="ring-fg" id="ringFg" cx="55" cy="55" r="46"></circle>
+          </svg>
+          <div class="gap-score-num"><strong id="gapScoreNum">—</strong><span>completeness</span></div>
+        </div>
+        <div class="help" style="text-align:center; margin-top:-0.3rem;">Thresholds (≥75% green / ≥45% amber / below red) are an internal design choice for this navigator, not a regulatory pass/fail line.</div>
+        <div style="text-align:center; margin-bottom:0.5rem;" id="overallStatusBadge"></div>
+        <div id="statusBreakdown"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><h2>Prioritized Action List</h2></div>
+      <div class="card-body" id="actionList"><div class="stub-note">Complete the Device Profiler to generate a prioritized, cited action list.</div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><h2>Export</h2></div>
+      <div class="card-body">
+        <div class="help">Printing generates the Integrated Clinical Evaluation Master Report (all modules, current status, and citations) in one pass — led by the prioritized action list and overall score.</div>
+        <div class="btn-row">
+          <button class="btn" id="printBtn">Print / Save Master Report as PDF</button>
+          <button class="btn secondary" id="csvBtn">Export CSV (Profile + Scores)</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- MASTER REPORT (print-only) -->
+<div id="masterReport">
+  <h1 style="font-size:1.3rem;">Integrated Clinical Evaluation Master Report</h1>
+  <div id="masterReportBody" style="font-size:0.85rem; line-height:1.5;"></div>
+</div>
+
+<div class="footer-note">
+  ClinicalCompass — a free, offline, deterministic navigator for clinical evaluation (EU MDR) and clinical evidence (FDA) across 14 modules. Every status is produced by fixed, human-written rules and cites its source document — <strong>no AI in the compliance logic</strong>. Verify against the current version of each cited standard/guidance before regulatory use.
+  <br><br>Part of the same family as
+  <a href="https://rajeevyadav.github.io/regcompass/" target="_blank" rel="noopener">RegCompass</a> ·
+  <a href="https://rajeevyadav.github.io/cybercompass/" target="_blank" rel="noopener">CyberCompass</a> ·
+  <a href="https://rajeevyadav.github.io/eIFUCompass/" target="_blank" rel="noopener">eIFUCompass</a>.
+  Decision-support only — not legal, regulatory, or clinical advice.
+</div>
+
+<script src="js/utils.js"></script>
+<script src="js/rules/profile.js"></script>
+<script src="js/rules/strategy-eu.js"></script>
+<script src="js/rules/strategy-fda.js"></script>
+<script src="js/rules/equivalence.js"></script>
+<script src="js/rules/data-gap.js"></script>
+<script src="js/rules/cep-cer.js"></script>
+<script src="js/rules/pmcf.js"></script>
+<script src="js/rules/sscp.js"></script>
+<script src="js/rules/psur-pms.js"></script>
+<script src="js/rules/samd-ai.js"></script>
+<script src="js/rules/pccp.js"></script>
+<script src="js/rules/ai-act.js"></script>
+<script src="js/rules/human-factors.js"></script>
+<script src="js/rules/cybersecurity.js"></script>
+<script src="js/rules/soup.js"></script>
+<script src="js/checklist-engine.js"></script>
+<script src="js/export.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
