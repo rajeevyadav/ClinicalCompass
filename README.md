@@ -75,10 +75,18 @@ The Windows installer is **per-user** (no admin/UAC needed).
 
 ## No AI inside
 
-The shipped page and its tooling contain no AI/ML code. Every status is produced by fixed,
-human-written rules you can read in `js/rules/` and `js/checklist-engine.js` — the app runs
-entirely on your device, works offline, and transmits nothing. A CI check fails the build
-if an AI-provider reference or ML dependency is ever introduced into shipped code.
+The shipped page and its build tooling contain **no AI or machine-learning code** —
+every result is produced by fixed, human-written rules you can read in this repository's
+source. The app runs entirely on your device, works offline, and transmits nothing. CI
+guardrails fail the build if an AI-provider reference, an ML dependency, or an AI/bot
+commit-authorship trailer is ever introduced.
+
+## Verification
+
+Every citation and link is checked against its primary official source; the audit trail
+lives in [`verification/log.md`](verification/log.md). Sources move over time, so a lighter
+review runs quarterly — see [`NEXT_REVIEW.md`](NEXT_REVIEW.md) (next due **2026-11-18**,
+synchronised across the family). No silent edits — every change is reviewed and logged.
 
 ## Disclaimer
 
