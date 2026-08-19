@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!-- ClinicalCompass — Clinical Evaluation (EU MDR) / Clinical Evidence (FDA)
-     Navigator. Version 1.0.1. Deterministic, offline-first, no AI in the
+     Navigator. Version 1.0.2. Deterministic, offline-first, no AI in the
      compliance logic. Verify every citation against the current source text. -->
 <html lang="en">
 <head>
@@ -452,6 +452,14 @@
     </div>
   </div>
 </main>
+
+<!-- Desktop-app download bar. The same page runs in the browser and installs as
+     a PWA; this is the native Windows convenience build. -->
+<div class="dl-bar">
+  <span class="dl-lead">Desktop app</span>
+  <a class="dl-btn" href="https://github.com/rajeevyadav/clinicalcompass/releases/latest/download/ClinicalCompass-Setup.exe">⤓ Download for Windows</a>
+  <span class="dl-note">Per-user installer (no admin needed). Unsigned — on the Windows SmartScreen prompt choose “More info → Run anyway”, and verify the download came from github.com/rajeevyadav/clinicalcompass. Or just use it in your browser / install as an app.</span>
+</div>
 
 <!-- MASTER REPORT (print-only) -->
 <div id="masterReport">
