@@ -2,7 +2,7 @@
    Status from breadth of available data-source categories. Pure function. */
 (function (root) {
   'use strict';
-  const CC = root.CC; const S = CC.STATUS; const V = '2026-08-18';
+  const CC = root.CC; const S = CC.STATUS; const V = '2026-08-19';
 
   function evaluate(p) {
     const checked = p.gapSourcesChecked;
@@ -14,7 +14,7 @@
       : checked + '/' + total + ' data source categories available. ' +
         (claims ? 'Claims mapped for analysis.' : 'Add claimed benefit/safety/performance endpoints to complete the mapping.');
 
-    return { status: status, text: text, cites: [CC.cite('MDR Annex XIV; MDCG 2020-6 Annex III (evidence hierarchy analogy)', V)] };
+    return { status: status, text: text, cites: [CC.cite('MDR Annex XIV; MDCG 2020-6 Appendix III (evidence hierarchy analogy)', V)] };
   }
 
   CC.rules.dataGap = { evaluate: evaluate };

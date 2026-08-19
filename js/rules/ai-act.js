@@ -7,8 +7,8 @@
    as DEADLINE so the test flags a re-check whenever this file is touched. */
 (function (root) {
   'use strict';
-  const CC = root.CC; const S = CC.STATUS; const V = '2026-08-18';
-  const DEADLINE = '2 August 2028'; // Annex I regulated-product AI systems, post Digital Omnibus (June 2026)
+  const CC = root.CC; const S = CC.STATUS; const V = '2026-08-19';
+  const DEADLINE = '2 August 2028'; // Annex I regulated-product AI systems, post Digital Omnibus, 2026
 
   function evaluate(p) {
     if (!p.samd) {
@@ -21,7 +21,7 @@
     } else {
       status = S.AMBER;
       text = 'Class ' + p.euClass + ' requires Notified Body involvement — this AI system is presumptively high-risk under AI Act Art. 6(1)/Annex I. Compliance deadline: ' + DEADLINE +
-             ' (Digital Omnibus, June 2026). Assessment is folded into the existing MDR conformity assessment per Art. 43(3) and MDCG 2025-6 — not a separate parallel review.';
+             ' (Digital Omnibus, 2026). Assessment is folded into the existing MDR conformity assessment per Art. 43(3) and MDCG 2025-6 — not a separate parallel review.';
     }
     return { status: status, text: text, deadline: DEADLINE, cites: cites() };
   }
